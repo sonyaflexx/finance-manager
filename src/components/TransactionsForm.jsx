@@ -3,6 +3,7 @@ import { TextField, Button, Container, Select, MenuItem, InputLabel, FormControl
 import { useSelector, useDispatch } from 'react-redux';
 import { addCategory } from '../store/reducers/categoriesSlice';
 import { addTransaction } from '../store/reducers/transactionsSlice';
+import { v4 as uuidv4 } from 'uuid';
 
 function TransactionsForm() {
   const categories = useSelector((state) => state.categories);
@@ -10,12 +11,13 @@ function TransactionsForm() {
 
   const [newCategory, setNewCategory] = useState('');
   const [addingCategory, setAddingCategory] = useState(false);
+  const [error, setError] = useState('')
 
   const [transaction, setTransaction] = useState({
     type: 'income',
     description: '',
     amount: '',
-    category: '',
+    category: 'Общее',
     datetime: '',
   });
   
@@ -34,8 +36,24 @@ function TransactionsForm() {
   
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(addTransaction(transaction));
-  };
+    const now = new Date();
+    const updatedTransaction = { ...transaction };
+
+    if (transaction.amount && transaction.amount > 0) {
+        if (!transaction.description) {
+            updatedTransaction.description = 'Обычная операция.';
+        }
+        if (transaction.datetime === '') {
+            updatedTransaction.datetime = now;
+        }
+        updatedTransaction.amount = Number(transaction.amount);
+        updatedTransaction.id = uuidv4();
+
+        dispatch(addTransaction(updatedTransaction));
+    } else {
+        setError('Некорректная сумма!');
+    }
+};
   
   const toggleAddCategory = () => {
     setAddingCategory(!addingCategory);
@@ -108,6 +126,8 @@ function TransactionsForm() {
           variant="outlined"
           type="number"
           name="amount"
+          error={error}
+          required
           value={transaction.amount}
           onChange={handleChange}
         />

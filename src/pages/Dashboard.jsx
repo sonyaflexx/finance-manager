@@ -55,9 +55,9 @@ const Dashboard = () => {
       }
 
       if (type === 'income') {
-        monthlyData[key].income += amount;
+        monthlyData[key].income += Number(amount);
       } else if (type === 'expense') {
-        monthlyData[key].expense += amount;
+        monthlyData[key].expense += Number(amount);
       }
     });
 

@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-const initialState = ['Еда', 'Жилье', 'Одежда'];
+const initialState = ['Общее', 'Еда', 'Жилье', 'Одежда'];
 
 const categoriesSlice = createSlice({
   name: 'categories',

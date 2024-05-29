@@ -4,6 +4,7 @@ import { TextField, Button, Container, Select, MenuItem, InputLabel, FormControl
 import { addBudget } from '../store/reducers/budgetSlice';
 import BudgetList from '../components/BudgetList';
 import { addCategory } from '../store/reducers/categoriesSlice';
+import { v4 as uuidv4 } from 'uuid';
 
 const Budget = () => {
   const categories = useSelector((state) => state.categories);
@@ -12,10 +13,11 @@ const Budget = () => {
 
   const [newCategory, setNewCategory] = useState('');
   const [addingCategory, setAddingCategory] = useState(false);
+  const [error, setError] = useState('')
 
 
   const [budget, setBudget] = useState({
-    category: '',
+    category: 'Общее',
     period: 'month',
     goal: ''
   });
@@ -40,7 +42,13 @@ const Budget = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(addBudget(budget));
+    if (budget.goal && budget.goal > 0) {
+      const updatedBudget = { ...budget }
+      updatedBudget.id = uuidv4();
+      dispatch(addBudget(budget));
+    } else {
+      setError('Некорректная сумма!');
+    }
   };
 
   return (
@@ -106,6 +114,8 @@ const Budget = () => {
           name="goal"
           value={budget.goal}
           onChange={handleChange}
+          error={error}
+          required
         />
         <Button type="submit" variant="contained" color="primary">
           Установить бюджет
