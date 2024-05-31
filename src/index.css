@@ -2,3 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+    background-color: rgb(243, 243, 243);
+    height: 100%;
+}

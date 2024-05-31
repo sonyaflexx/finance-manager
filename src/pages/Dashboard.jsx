@@ -71,7 +71,7 @@ const Dashboard = () => {
     <div className="max-w-7xl mx-auto py-16 px-4">
       <h1 className="text-3xl font-bold mb-8">Панель управления</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="p-6 bg-white shadow-md rounded-lg">
+        <div className="p-6 bg-white shadow-md rounded-2xl">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-semibold">Операции</h2>
             <select 
@@ -88,7 +88,7 @@ const Dashboard = () => {
           </div>
           <TransactionsList transactions={filteredTransactions} />
           </div>
-          <div className="p-6 bg-white shadow-md rounded-lg">
+          <div className="p-6 bg-white shadow-md rounded-2xl">
             <h2 className="text-2xl font-semibold mb-4">Анализ</h2>
               { transactions && transactions.length > 0 ? (
                 <ResponsiveContainer width="100%" height={300}>

@@ -10,7 +10,10 @@ function Transactions() {
     <div className='flex flex-col items-center py-16 gap-10'>
       <h1 className='font-bold text-3xl'>Учёт операций</h1>
       <TransactionsForm />
-      <TransactionsList transactions={transactions} deletable={true} className='w-full max-w-[1200px] px-6 h-auto max-h-72' />
+      <div className='w-full max-w-[1150px] p-6 rounded-2xl h-auto max-h-92 bg-white'>
+        <h2 className='text-xl font-bold mb-3'>История операций</h2>
+        <TransactionsList transactions={transactions} deletable={true} className='h-72 pb-1' />
+      </div>
     </div>
   );
 }

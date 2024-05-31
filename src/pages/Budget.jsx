@@ -64,6 +64,7 @@ const Budget = () => {
               value={newCategory}
               onChange={(e) => setNewCategory(e.target.value)}
               fullWidth
+              className='bg-white'
             />
             <Button onClick={handleAddCategory} variant="contained" color="primary">
               Добавить
@@ -81,6 +82,7 @@ const Budget = () => {
               name="category"
               value={budget.category}
               onChange={handleChange}
+              className='bg-white'
             >
               {categories.map((category, index) => (
                 <MenuItem key={index} value={category}>{category}</MenuItem>
@@ -100,6 +102,7 @@ const Budget = () => {
             name="period"
             value={budget.period}
             onChange={handleChange}
+            className='bg-white'
           >
             <MenuItem value="day">День</MenuItem>
             <MenuItem value="month">Месяц</MenuItem>
@@ -116,13 +119,14 @@ const Budget = () => {
           onChange={handleChange}
           error={error}
           required
+          className='bg-white'
         />
         <Button type="submit" variant="contained" color="primary">
           Установить бюджет
         </Button>
       </form>
 
-      <BudgetList plans={plans} />
+      <BudgetList plans={plans} deletable={true} />
     </Container>
   );
 };

@@ -12,13 +12,14 @@ function TransactionsForm() {
   const [newCategory, setNewCategory] = useState('');
   const [addingCategory, setAddingCategory] = useState(false);
   const [error, setError] = useState('')
+  const now = new Date().toISOString().slice(0, 16);
 
   const [transaction, setTransaction] = useState({
     type: 'income',
     description: '',
     amount: '',
     category: 'Общее',
-    datetime: '',
+    datetime: now,
   });
   
   const handleChange = (e) => {
@@ -71,6 +72,7 @@ function TransactionsForm() {
             name="type"
             value={transaction.type}
             onChange={handleChange}
+            className='bg-white'
           >
             <MenuItem value="income">Доходы</MenuItem>
             <MenuItem value="expense">Расходы</MenuItem>
@@ -85,6 +87,7 @@ function TransactionsForm() {
               name="newCategory"
               value={newCategory}
               onChange={(e) => setNewCategory(e.target.value)}
+              className='bg-white'
               fullWidth
             />
             <Button onClick={handleAddCategory} variant="contained" color="primary">
@@ -103,6 +106,7 @@ function TransactionsForm() {
               name="category"
               value={transaction.category}
               onChange={handleChange}
+              className='bg-white'
             >
               {categories.map((category, index) => (
                 <MenuItem key={index} value={category}>{category}</MenuItem>
@@ -120,6 +124,7 @@ function TransactionsForm() {
           name="description"
           value={transaction.description}
           onChange={handleChange}
+          className='bg-white'
         />
         <TextField
           label="Кол-во денег, ₽"
@@ -130,6 +135,7 @@ function TransactionsForm() {
           required
           value={transaction.amount}
           onChange={handleChange}
+          className='bg-white'
         />
         <TextField
           label="Дата и время"
@@ -141,6 +147,7 @@ function TransactionsForm() {
           InputLabelProps={{
             shrink: true,
           }}
+          className='bg-white'
         />
         <Button type="submit" variant="contained" color="primary">
           Добавить операцию

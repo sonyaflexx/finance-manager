@@ -1,12 +1,14 @@
+import { IconButton } from "@mui/material";
+import DeleteIcon from '@mui/icons-material/Delete';
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 
-export default function BudgetList({ plans }) {
+export default function BudgetList({ plans, deletable }) {
   const transactions = useSelector((state) => state.transactions.transactions);
   const [filterPeriod, setFilterPeriod] = useState("month");
 
   const categoryTotals = transactions.reduce((acc, transaction) => {
-  const amount = transaction.type === 'expense' ? transaction.amount : -transaction.amount;
+  const amount = transaction.type === 'expense' ? transaction.amount : 0;
 
   const transactionDate = new Date(transaction.datetime);
   const budgetStartDate = new Date();
@@ -56,8 +58,13 @@ export default function BudgetList({ plans }) {
             return (
               <li key={plan.id} className="w-full flex justify-between px-4 py-2 border rounded-xl items-center">
                 <div className='font-medium'>{plan.category}</div>
-                <div className={`font-medium ${exceedsGoal ? 'text-red-600' : ''}`}>
+                <div className={`font-medium ${exceedsGoal ? 'text-red-600' : 'text-green-600'} flex items-center gap-4`}>
                   {totalAmount}₽ / {plan.goal}₽
+                  { deletable && <div>
+                    <IconButton aria-label="delete" color='error'>
+                      <DeleteIcon />
+                    </IconButton>
+                  </div> }
                 </div>
               </li>
             );

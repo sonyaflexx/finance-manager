@@ -10,10 +10,10 @@ function TransactionsList({ transactions, className, deletable }) {
   const sortedTransactions = [...transactions].sort((a, b) => new Date(b.datetime) - new Date(a.datetime));
 
   return (
-    <ul className={`h-56 overflow-y-auto flex flex-col gap-1 ${className}`}>
+    <ul className={`h-56 overflow-y-auto flex flex-col gap-1 max-sm:text-xs ${className}`}>
       { sortedTransactions && sortedTransactions.length > 0 ? (
       sortedTransactions.map(transaction => (
-        <li key={transaction.id} className={`w-full grid ${deletable ? 'grid-cols-12' : 'grid-cols-6'} px-4 py-2 border rounded-xl items-center`}>
+        <li key={transaction.id} className={`w-full bg-white grid ${deletable ? 'grid-cols-12' : 'grid-cols-6'} px-4 py-2 border rounded-xl items-center`}>
           <div className={`${deletable ? 'col-span-2' : 'col-span-1'} font-medium`}>{transaction.category}</div>
           <div className={`${deletable ? 'col-span-5' : 'col-span-2'}`}>{transaction.description}</div>
           <div className={`col-span-2 text-end`}>{new Date(transaction.datetime).toLocaleString()}</div>
