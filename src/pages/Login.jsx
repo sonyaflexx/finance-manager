@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { TextField, Button, Container, Typography } from '@mui/material';
+import { TextField, Button, Container, Typography, CircularProgress } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
+import { useDispatch, useSelector } from 'react-redux';
+import { login } from '../store/reducers/authSlice';
 
 function Login() {
   const [formData, setFormData] = useState({ email: '', password: '' });
-  const { loginUser } = useAuth();
+  const dispatch = useDispatch();
+  const { loginLoading, loginError } = useSelector((state) => state.auth)
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -13,7 +15,7 @@ function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    loginUser();
+    dispatch(login(formData));
   };
 
   return (
@@ -22,6 +24,7 @@ function Login() {
         Авторизация
       </Typography>
       <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
+        { loginError && <span className='text-red-600'>Некорректные данные!</span>}
         <TextField
           label="Электронная почта"
           variant="outlined"
@@ -29,6 +32,7 @@ function Login() {
           name="email"
           value={formData.email}
           onChange={handleChange}
+          error={loginError ? true : false}
         />
         <TextField
           label="Пароль"
@@ -37,9 +41,10 @@ function Login() {
           name="password"
           value={formData.password}
           onChange={handleChange}
+          error={loginError ? true : false}
         />
-        <Button type="submit" variant="contained" color="primary">
-          Войти
+        <Button type="submit" variant="contained" color="primary" disabled={loginLoading}>
+          { loginLoading ? <CircularProgress size={24} /> : 'Войти' }
         </Button>
         <Typography>
           Ещё нет аккаунта? <Link to="/register" className='underline'>Создать аккаунт</Link>

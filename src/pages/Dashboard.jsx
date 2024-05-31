@@ -1,14 +1,19 @@
-import React, { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import TransactionsList from '../components/TransactionsList';
 import BudgetList from '../components/BudgetList';
+import { fetchTransactions } from '../store/reducers/transactionsSlice';
 
 const Dashboard = () => {
   const [selectedPeriod, setSelectedPeriod] = useState('allTime');
+  const dispatch = useDispatch();
   const transactions = useSelector((state) => state.transactions.transactions);
   const plans = useSelector((state) => state.budget.plans);
-  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchTransactions());
+  }, [dispatch]);
 
   const handlePeriodChange = (event) => {
     setSelectedPeriod(event.target.value);

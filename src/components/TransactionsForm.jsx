@@ -1,19 +1,32 @@
 import React, { useState } from 'react';
-import { TextField, Button, Container, Select, MenuItem, InputLabel, FormControl, Box } from '@mui/material';
-import { useSelector, useDispatch } from 'react-redux';
-import { addCategory } from '../store/reducers/categoriesSlice';
+import { TextField, Button, Container, Modal, Typography, Box } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
 import { addTransaction } from '../store/reducers/transactionsSlice';
 import { v4 as uuidv4 } from 'uuid';
+import CategorySelect from './CategorySelect';
+
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  maxWidth: 500,
+  bgcolor: 'background.paper',
+  
+  boxShadow: 24,
+  p: 4,
+};
 
 function TransactionsForm() {
-  const categories = useSelector((state) => state.categories);
   const dispatch = useDispatch();
+  const budgets = useSelector((state) => state.budget.plans);
+  const transactions = useSelector((state) => state.transactions.transactions);
 
-  const [newCategory, setNewCategory] = useState('');
-  const [addingCategory, setAddingCategory] = useState(false);
-  const [error, setError] = useState('')
+  const [error, setError] = useState('');
+  const [modalOpen, setModalOpen] = useState(false);
+  const [pendingTransaction, setPendingTransaction] = useState(null);
+
   const now = new Date().toISOString().slice(0, 16);
-
   const [transaction, setTransaction] = useState({
     type: 'income',
     description: '',
@@ -21,110 +34,62 @@ function TransactionsForm() {
     category: 'Общее',
     datetime: now,
   });
-  
+
   const handleChange = (e) => {
     setTransaction({ ...transaction, [e.target.name]: e.target.value });
   };
-  
-  const handleAddCategory = () => {
-    if (newCategory.trim() !== '') {
-      dispatch(addCategory(newCategory.trim()));
-      setNewCategory('');
-      setTransaction({ ...transaction, category: newCategory.trim() });
-      setAddingCategory(!addingCategory);
-    }
+
+  const handleConfirm = () => {
+    dispatch(addTransaction(pendingTransaction));
+    setModalOpen(false);
+    setPendingTransaction(null);
   };
-  
+
+  const handleCancel = () => {
+    setModalOpen(false);
+    setPendingTransaction(null);
+  };
+
+  const checkBudget = () => {
+    const budget = budgets.find(b => b.category === transaction.category);
+    if (!budget) return true;
+
+    const transactionsInCategory = transactions.filter(t => t.category === transaction.category);
+    const totalAmount = transactionsInCategory.reduce((sum, t) => sum + (t.type === 'expense' ? t.amount : 0), 0);
+    return totalAmount + Number(transaction.amount) <= budget.goal;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    const now = new Date();
-    const updatedTransaction = { ...transaction };
+    const updatedTransaction = { ...transaction, amount: Number(transaction.amount), id: uuidv4() };
 
     if (transaction.amount && transaction.amount > 0) {
-        if (!transaction.description) {
-            updatedTransaction.description = 'Обычная операция.';
-        }
-        if (transaction.datetime === '') {
-            updatedTransaction.datetime = now;
-        }
-        updatedTransaction.amount = Number(transaction.amount);
-        updatedTransaction.id = uuidv4();
+      if (!transaction.description) {
+        updatedTransaction.description = 'Обычная операция.';
+      }
 
+      if (checkBudget()) {
         dispatch(addTransaction(updatedTransaction));
+      } else {
+        setPendingTransaction(updatedTransaction);
+        setModalOpen(true);
+      }
     } else {
-        setError('Некорректная сумма!');
+      setError('Некорректная сумма!');
     }
-};
-  
-  const toggleAddCategory = () => {
-    setAddingCategory(!addingCategory);
-    setNewCategory('');
   };
 
   return (
     <Container>
       <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
-        <FormControl variant="outlined" fullWidth>
-          <InputLabel id="transaction-type-label">Тип операции</InputLabel>
-          <Select
-            labelId="transaction-type-label"
-            label="Тип операции"
-            name="type"
-            value={transaction.type}
-            onChange={handleChange}
-            className='bg-white'
-          >
-            <MenuItem value="income">Доходы</MenuItem>
-            <MenuItem value="expense">Расходы</MenuItem>
-          </Select>
-        </FormControl>
-        
-        {addingCategory ? (
-          <Box className="flex space-x-4">
-            <TextField
-              label="Новая категория"
-              variant="outlined"
-              name="newCategory"
-              value={newCategory}
-              onChange={(e) => setNewCategory(e.target.value)}
-              className='bg-white'
-              fullWidth
-            />
-            <Button onClick={handleAddCategory} variant="contained" color="primary">
-              Добавить
-            </Button>
-            <Button onClick={toggleAddCategory} variant="contained" color="secondary">
-              Отмена
-            </Button>
-          </Box>
-        ) : (
-          <FormControl variant="outlined" fullWidth>
-            <InputLabel id="transaction-category-label">Категория</InputLabel>
-            <Select
-              labelId="transaction-category-label"
-              label="Категория"
-              name="category"
-              value={transaction.category}
-              onChange={handleChange}
-              className='bg-white'
-            >
-              {categories.map((category, index) => (
-                <MenuItem key={index} value={category}>{category}</MenuItem>
-              ))}
-              <MenuItem value="" onClick={toggleAddCategory}>
-                + Добавить категорию
-              </MenuItem>
-            </Select>
-          </FormControl>
-        )}
-
+        <CategorySelect value={transaction.category} onChange={(e) => handleChange(e)} />
         <TextField
           label="Описание операции"
           variant="outlined"
           name="description"
           value={transaction.description}
           onChange={handleChange}
-          className='bg-white'
+          className="bg-white"
         />
         <TextField
           label="Кол-во денег, ₽"
@@ -135,7 +100,7 @@ function TransactionsForm() {
           required
           value={transaction.amount}
           onChange={handleChange}
-          className='bg-white'
+          className="bg-white"
         />
         <TextField
           label="Дата и время"
@@ -147,12 +112,31 @@ function TransactionsForm() {
           InputLabelProps={{
             shrink: true,
           }}
-          className='bg-white'
+          className="bg-white"
         />
         <Button type="submit" variant="contained" color="primary">
           Добавить операцию
         </Button>
       </form>
+
+      <Modal open={modalOpen} onClose={handleCancel}>
+        <Box sx={style}>
+          <Typography variant="h6" component="h2">
+            Превышение бюджета
+          </Typography>
+          <Typography sx={{ mt: 2 }}>
+            Добавление этой транзакции приведет к превышению бюджета. Вы уверены, что хотите продолжить?
+          </Typography>
+          <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between', gap: 1 }}>
+            <Button onClick={handleConfirm} variant="contained" color="primary">
+              Подтвердить
+            </Button>
+            <Button onClick={handleCancel} variant="contained" color="secondary">
+              Отмена
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
     </Container>
   );
 }

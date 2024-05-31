@@ -8,6 +8,7 @@ import Dashboard from './pages/Dashboard';
 import Header from './components/Header';
 import Transactions from './pages/Transactions';
 import Budget from './pages/Budget';
+import Reports from './pages/Reports';
 
 const ProtectedRoute = ({ user, redirectPath = '/login' }) => {
   if (!user) {
@@ -31,6 +32,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/transactions" element={<Transactions />} />
           <Route path="/plans" element={<Budget />} />
+          <Route path="/reports" element={<Reports />} />
         </Route>
       </Routes>
     </div>

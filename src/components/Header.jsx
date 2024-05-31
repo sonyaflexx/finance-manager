@@ -28,6 +28,7 @@ function Header() {
                   <Button color="inherit" component={Link} to="/dashboard">Главная</Button>
                   <Button color="inherit" component={Link} to="/transactions">Операции</Button>
                   <Button color="inherit" component={Link} to="/plans">Планирование</Button>
+                  <Button color="inherit" component={Link} to="/reports">Отчётность</Button>
               </div>
               <Button color="inherit" variant='outlined' onClick={logoutUser}>Выйти</Button>
             </div>
@@ -39,10 +40,13 @@ function Header() {
                 <ListItem component={Link} to="/transactions" onClick={toggleMenu}>
                   <ListItemText primary="Операции" />
                 </ListItem>
-                <ListItem button component={Link} to="/plans" onClick={toggleMenu}>
+                <ListItem component={Link} to="/plans" onClick={toggleMenu}>
                   <ListItemText primary="Планирование" />
                 </ListItem>
-                <ListItem button onClick={logoutUser}>
+                <ListItem component={Link} to="/reports" onClick={toggleMenu}>
+                  <ListItemText primary="Отчётность" />
+                </ListItem>
+                <ListItem onClick={logoutUser}>
                   <ListItemText primary="Выйти" />
                 </ListItem>
               </List>

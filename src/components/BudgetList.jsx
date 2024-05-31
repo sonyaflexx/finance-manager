@@ -1,42 +1,47 @@
 import { IconButton } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteBudget } from "../store/reducers/budgetSlice";
 
 export default function BudgetList({ plans, deletable }) {
+  const dispatch = useDispatch();
   const transactions = useSelector((state) => state.transactions.transactions);
   const [filterPeriod, setFilterPeriod] = useState("month");
 
   const categoryTotals = transactions.reduce((acc, transaction) => {
-  const amount = transaction.type === 'expense' ? transaction.amount : 0;
+    const amount = transaction.type === 'expense' ? transaction.amount : 0;
+    const transactionDate = new Date(transaction.datetime);
+    const budgetStartDate = new Date();
+    const budgetEndDate = new Date();
 
-  const transactionDate = new Date(transaction.datetime);
-  const budgetStartDate = new Date();
-  const budgetEndDate = new Date();  
+    if (filterPeriod === "day") {
+      budgetStartDate.setHours(0, 0, 0, 0);
+      budgetEndDate.setHours(23, 59, 59, 999);
+    } else if (filterPeriod === "month") {
+      budgetStartDate.setDate(1);
+      budgetStartDate.setHours(0, 0, 0, 0);
+      budgetEndDate.setMonth(budgetEndDate.getMonth() + 1, 0);
+      budgetEndDate.setHours(23, 59, 59, 999);
+    } else if (filterPeriod === "year") {
+      budgetStartDate.setMonth(0, 1);
+      budgetStartDate.setHours(0, 0, 0, 0);
+      budgetEndDate.setMonth(11, 31);
+      budgetEndDate.setHours(23, 59, 59, 999);
+    }
 
-  if (filterPeriod === "day") {
-    budgetStartDate.setHours(0, 0, 0, 0);
-    budgetEndDate.setHours(23, 59, 59, 999);
-  } else if (filterPeriod === "month") {
-    budgetStartDate.setDate(1);
-    budgetStartDate.setHours(0, 0, 0, 0);
-    budgetEndDate.setMonth(budgetEndDate.getMonth() + 1, 0);
-    budgetEndDate.setHours(23, 59, 59, 999);
-  } else if (filterPeriod === "year") {
-    budgetStartDate.setMonth(0, 1);
-    budgetStartDate.setHours(0, 0, 0, 0);
-    budgetEndDate.setMonth(11, 31);
-    budgetEndDate.setHours(23, 59, 59, 999);
-  }
+    if (transactionDate >= budgetStartDate && transactionDate <= budgetEndDate) {
+      acc[transaction.category] = (acc[transaction.category] || 0) + amount;
+    }
 
-  if (transactionDate >= budgetStartDate && transactionDate <= budgetEndDate) {
-    acc[transaction.category] = (acc[transaction.category] || 0) + amount;
-  }
-
-  return acc;
+    return acc;
   }, {});
 
   const filteredPlans = plans.filter(plan => plan.period === filterPeriod);
+
+  const handleDelete = (id) => {
+    dispatch(deleteBudget(id));
+  };
 
   return (
     <div className="p-6 bg-white shadow-md rounded-xl mt-6">
@@ -60,11 +65,13 @@ export default function BudgetList({ plans, deletable }) {
                 <div className='font-medium'>{plan.category}</div>
                 <div className={`font-medium ${exceedsGoal ? 'text-red-600' : 'text-green-600'} flex items-center gap-4`}>
                   {totalAmount}₽ / {plan.goal}₽
-                  { deletable && <div>
-                    <IconButton aria-label="delete" color='error'>
-                      <DeleteIcon />
-                    </IconButton>
-                  </div> }
+                  {deletable && (
+                    <div>
+                      <IconButton aria-label="delete" color='error' onClick={() => handleDelete(plan.id)}>
+                        <DeleteIcon />
+                      </IconButton>
+                    </div>
+                  )}
                 </div>
               </li>
             );
