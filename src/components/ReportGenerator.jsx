@@ -107,13 +107,13 @@ const ReportGenerator = () => {
             ))}
           </Select>
         </FormControl>
-        <Button type="submit" variant="contained" color="primary" fullWidth className='!mt-2'>Сгенерировать отчет</Button>
+        <Button type="submit" variant="contained" color="primary" fullWidth className='!py-3 !mt-2 !rounded-xl !font-semibold'>Сгенерировать отчет</Button>
       </form>
       {reportData && (
         <Box mt={4}>
           <Typography variant="h6" component="h3" gutterBottom>Результаты Отчета</Typography>
           <pre>{JSON.stringify(reportData, null, 2)}</pre>
-          <Button variant="contained" color="secondary" onClick={handleDownload}>Скачать в DOCX</Button>
+          <Button variant="contained" color="secondary" onClick={handleDownload} className='!py-3 !rounded-xl !font-semibold'>Скачать в DOCX</Button>
         </Box>
       )}
     </Container>

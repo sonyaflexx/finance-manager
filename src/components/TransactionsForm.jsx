@@ -11,8 +11,7 @@ const style = {
   left: '50%',
   transform: 'translate(-50%, -50%)',
   maxWidth: 500,
-  bgcolor: 'background.paper',
-  
+  bgcolor: 'background.paper',  
   boxShadow: 24,
   p: 4,
 };
@@ -114,24 +113,24 @@ function TransactionsForm() {
           }}
           className="bg-white"
         />
-        <Button type="submit" variant="contained" color="primary">
+        <Button type="submit" variant="contained" color="primary"  className='!py-3 !rounded-lg !font-semibold'>
           Добавить операцию
         </Button>
       </form>
 
       <Modal open={modalOpen} onClose={handleCancel}>
-        <Box sx={style}>
-          <Typography variant="h6" component="h2">
+        <Box sx={style} className={'rounded-3xl'}>
+          <Typography variant="h6" component="h2" className='!font-semibold !text-2xl'>
             Превышение бюджета
           </Typography>
-          <Typography sx={{ mt: 2 }}>
+          <Typography sx={{ mt: 2, mb: 4 }}>
             Добавление этой транзакции приведет к превышению бюджета. Вы уверены, что хотите продолжить?
           </Typography>
           <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between', gap: 1 }}>
-            <Button onClick={handleConfirm} variant="contained" color="primary">
+            <Button onClick={handleConfirm} variant="contained" color="primary"  className='!py-3 !rounded-xl !font-semibold'>
               Подтвердить
             </Button>
-            <Button onClick={handleCancel} variant="contained" color="secondary">
+            <Button onClick={handleCancel} variant="contained" color="secondary"  className='!py-3 !rounded-xl !font-semibold'>
               Отмена
             </Button>
           </Box>

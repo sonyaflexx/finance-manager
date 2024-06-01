@@ -44,8 +44,8 @@ function TransactionsList({ transactions, className, editable }) {
         transactions.map(transaction => (
           <>
           <li key={transaction.id} className={`w-full bg-white grid ${editable ? 'grid-cols-12' : 'grid-cols-6'} ${editingTransactionId === transaction.id && '!hidden'} px-4 py-2 border rounded-xl items-center`}>
-            <div className={`${editable ? 'col-span-2' : 'col-span-1'} font-medium`}>{transaction.category}</div>
-            <div className={`${editable ? 'col-span-5' : 'col-span-2'}`}>{transaction.description}</div>
+            <div className={`${editable ? 'col-span-2' : 'col-span-1'} font-medium overflow-x-hidden text-ellipsis`}>{transaction.category}</div>
+            <div className={`${editable ? 'col-span-5' : 'col-span-2'} pl-2 overflow-x-hidden text-ellipsis`}>{transaction.description}</div>
             <div className={`col-span-2 text-end`}>{new Date(transaction.datetime).toLocaleString()}</div>
             <div className={`${editable ? 'col-span-2' : 'col-span-1'} font-medium text-end pr-2 ${transaction.type === 'expense' ? 'text-red-500' : 'text-green-500'}`}>
               {transaction.type === 'expense' ? '-' : '+'}{transaction.amount} ₽

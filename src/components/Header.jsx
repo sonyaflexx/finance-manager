@@ -15,9 +15,9 @@ function Header() {
   return (
     <AppBar position="sticky">
       <Toolbar>
-        <Typography variant="h6" style={{ flexGrow: 1 }}>
-          Финанс
-        </Typography>
+        <span className='flex-grow font-bold text-xl'>
+          FINANCE MANAGER
+        </span>
         {isAuthenticated && (
           <>
             <IconButton edge="start" color="inherit" aria-label="menu" onClick={toggleMenu} sx={{ display: { md: 'none' } }}>

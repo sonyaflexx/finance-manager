@@ -19,10 +19,10 @@ function Login() {
   };
 
   return (
-    <Container maxWidth="sm" className="mt-10">
-      <Typography variant="h4" component="h1" gutterBottom>
+    <Container maxWidth="sm" className="mt-10 bg-white !p-8 rounded-3xl shadow-md">
+      <h1 className='text-3xl font-bold text-center mb-8'>
         Авторизация
-      </Typography>
+      </h1>
       <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
         { loginError && <span className='text-red-600'>Некорректные данные!</span>}
         <TextField
@@ -33,6 +33,7 @@ function Login() {
           value={formData.email}
           onChange={handleChange}
           error={loginError ? true : false}
+          className='bg-white'
         />
         <TextField
           label="Пароль"
@@ -42,8 +43,9 @@ function Login() {
           value={formData.password}
           onChange={handleChange}
           error={loginError ? true : false}
+          className='bg-white'
         />
-        <Button type="submit" variant="contained" color="primary" disabled={loginLoading}>
+        <Button type="submit" variant="contained" color="primary" disabled={loginLoading} className='!py-3 !rounded-lg !font-semibold'>
           { loginLoading ? <CircularProgress size={24} /> : 'Войти' }
         </Button>
         <Typography>

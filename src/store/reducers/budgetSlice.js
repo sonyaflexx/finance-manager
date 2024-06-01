@@ -23,12 +23,36 @@ export const editBudget = createAsyncThunk('budget/editBudget', async ({ id, upd
 
 const initialState = {
   plans: [
-    // {
-    //   id: 1,
-    //   category: 'Общее',
-    //   goal: 10,
-    //   period: 'month'
-    // }
+    {
+      id: 1,
+      category: 'Общее',
+      goal: 1000,
+      period: 'month'
+    },
+    {
+      id: 2,
+      category: 'Еда',
+      goal: 150000,
+      period: 'year'
+    },
+    {
+      id: 3,
+      category: 'Развлечения',
+      goal: 500,
+      period: 'day'
+    },
+    {
+      id: 4,
+      category: 'Еда',
+      goal: 1000,
+      period: 'day'
+    },
+    {
+      id: 5,
+      category: 'Общее',
+      goal: 500,
+      period: 'day'
+    },
   ],
   loading: false,
   error: null,

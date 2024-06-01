@@ -36,10 +36,10 @@ function Register() {
   };
 
   return (
-    <Container maxWidth="sm" className="mt-10">
-      <Typography variant="h4" component="h1" gutterBottom>
+    <Container maxWidth="sm" className="mt-10 bg-white !p-8 rounded-3xl shadow-md">
+      <h1 className='text-3xl font-bold text-center mb-8'>
         Регистрация
-      </Typography>
+      </h1>
       <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
         {!passwordMatchError && registerError && <span className='text-red-600'>Некорректные данные!</span>}
         <TextField
@@ -50,6 +50,7 @@ function Register() {
           value={formData.email}
           onChange={handleChange}
           error={registerError ? true : false}
+          className='bg-white'
         />
         <TextField
           label="Пароль"
@@ -59,6 +60,7 @@ function Register() {
           value={formData.password}
           onChange={handleChange}
           error={registerError || passwordMatchError ? true : false}
+          className='bg-white'
           InputProps={{
             endAdornment: (
               <InputAdornment position="end" className='pr-2'>
@@ -81,6 +83,7 @@ function Register() {
           value={formData.confirmPassword}
           onChange={handleChange}
           error={passwordMatchError ? true : false}
+          className='bg-white'
           InputProps={{
             endAdornment: (
               <InputAdornment position="end" className='pr-2'>
@@ -96,7 +99,7 @@ function Register() {
           }}
         />
         {passwordMatchError && <span className='!mt-0.5 text-red-600'>Пароли не совпадают!</span>}
-        <Button type="submit" variant="contained" color="primary" disabled={registerLoading}>
+        <Button type="submit" variant="contained" color="primary" disabled={registerLoading} className='!py-3 !rounded-lg !font-semibold'>
           {registerLoading ? <CircularProgress size={24} /> : 'Зарегистрироваться'}
         </Button>
         <Typography>

@@ -121,7 +121,7 @@ const Budget = () => {
           required
           className='bg-white'
         />
-        <Button type="submit" variant="contained" color="primary">
+        <Button type="submit" variant="contained" color="primary" className='!py-3 !rounded-xl !font-semibold'>
           Установить бюджет
         </Button>
       </form>

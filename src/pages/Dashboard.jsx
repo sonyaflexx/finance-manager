@@ -91,7 +91,7 @@ const Dashboard = () => {
               <option value="allTime">Всё время</option>
             </select>
           </div>
-          <TransactionsList transactions={filteredTransactions} />
+          <TransactionsList transactions={filteredTransactions} className={`max-h-full h-72`} />
           </div>
           <div className="p-6 bg-white shadow-md rounded-2xl">
             <h2 className="text-2xl font-semibold mb-4">Анализ</h2>
@@ -99,7 +99,7 @@ const Dashboard = () => {
                 <ResponsiveContainer width="100%" height={300}>
                   <BarChart data={analysisData}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" name="Месяц" />
+                    <XAxis dataKey="month" name="Месяц" reversed />
                     <YAxis name="Сумма, ₽" />
                     <Tooltip />
                     <Legend />
