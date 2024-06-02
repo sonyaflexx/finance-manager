@@ -6,3 +6,24 @@ body {
     background-color: rgb(243, 243, 243);
     height: 100vh;
 }
+
+::-webkit-scrollbar {
+    width: 4px;
+    background-color: #d8d8d8;
+  }
+  
+  /* Стили для ползунка (thumb) */
+  ::-webkit-scrollbar-thumb {
+    background-color: #8b8b8b;
+    border-radius: 100px;
+  }
+  
+  /* Стили для трека (track) */
+  ::-webkit-scrollbar-track {
+    background-color: #f5f5f5;
+  }
+  
+  /* Стили для угловых кнопок */
+  ::-webkit-scrollbar-corner {
+    background-color: #f5f5f5;
+  }

@@ -51,7 +51,7 @@ export const deleteCategory = createAsyncThunk(
 
 const categoriesSlice = createSlice({
   name: 'categories',
-  initialState: ['Еда', 'Пиво', 'Мсяо'],
+  initialState: [],
   reducers: {},
   extraReducers: (builder) => {
     builder

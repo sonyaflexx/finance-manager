@@ -16,84 +16,13 @@ export const deleteTransaction = createAsyncThunk('transactions/deleteTransactio
   return transactionId;
 });
 
-export const editTransaction = createAsyncThunk('transactions/editTransaction', async ({ id, updatedTransaction }) => {
-  const response = await instance.put(`/api/transactions/${id}`, updatedTransaction);
+export const editTransaction = createAsyncThunk(`transactions/editTransaction`, async ({ editingTransactionId, editedTransaction }) => {
+  const response = await instance.put(`/api/transactions/${editingTransactionId}`, editedTransaction);
   return response.data;
 });
 
 const initialState = {
-  transactions: [
-    {
-      type: 'expense',
-      description: 'Обед',
-      amount: 220,
-      category: 'Работа',
-      datetime: '2024-06-01 13:00',
-    },
-    {
-      type: 'income',
-      description: 'Зарплата',
-      amount: 20000,
-      category: 'Работа',
-      datetime: '2024-06-01 12:00',
-    },
-    {
-      type: 'expense',
-      description: 'Кино',
-      amount: 2000,
-      category: 'Развлечения',
-      datetime: '2024-05-23 20:00',
-    },
-    {
-      type: 'income',
-      description: 'Иван вернул долг',
-      amount: 5000,
-      category: 'Общее',
-      datetime: '2024-06-02 15:00',
-    },
-    {
-      type: 'income',
-      description: 'Премия',
-      amount: 19000,
-      category: 'Работа',
-      datetime: '2024-04-01 13:00',
-    },
-    {
-      type: 'expense',
-      description: 'Стиральная машина',
-      amount: 12900,
-      category: 'Дом',
-      datetime: '2024-04-01 13:00',
-    },
-    {
-      type: 'expense',
-      description: 'Закуп в светофоре',
-      amount: 8000,
-      category: 'Еда',
-      datetime: '2024-03-02 12:00',
-    },
-    {
-      type: 'income',
-      description: 'Пособие',
-      amount: 5000,
-      category: 'Общее',
-      datetime: '2024-03-08 12:00',
-    },
-    {
-      type: 'expense',
-      description: 'Закуп в светофоре',
-      amount: 8000,
-      category: 'Еда',
-      datetime: '2024-06-01 12:00',
-    },
-    {
-      type: 'expense',
-      description: 'Кино',
-      amount: 400,
-      category: 'Развлечения',
-      datetime: '2024-06-01 15:00',
-    },
-  ],
+  transactions: [],
   loading: false,
   error: null,
 };
@@ -101,7 +30,15 @@ const initialState = {
 const transactionsSlice = createSlice({
   name: 'transactions',
   initialState,
-  reducers: {},
+  reducers: {
+    transactionUpdated: (state, action) => {
+      const { id, updatedTransaction } = action.payload;
+      const index = state.transactions.findIndex(transaction => transaction.id === id);
+      if (index !== -1) {
+        state.transactions[index] = { ...state.transactions[index], ...updatedTransaction };
+      }
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchTransactions.pending, (state) => {
@@ -132,5 +69,5 @@ const transactionsSlice = createSlice({
       });
   },
 });
-
+export const { transactionUpdated } = transactionsSlice.actions;
 export default transactionsSlice.reducer;

@@ -1,19 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import TransactionsList from '../components/TransactionsList';
 import BudgetList from '../components/BudgetList';
-import { fetchTransactions } from '../store/reducers/transactionsSlice';
 
 const Dashboard = () => {
   const [selectedPeriod, setSelectedPeriod] = useState('allTime');
-  const dispatch = useDispatch();
   const transactions = useSelector((state) => state.transactions.transactions);
   const plans = useSelector((state) => state.budget.plans);
-
-  useEffect(() => {
-    dispatch(fetchTransactions());
-  }, [dispatch]);
 
   const handlePeriodChange = (event) => {
     setSelectedPeriod(event.target.value);
@@ -43,30 +37,44 @@ const Dashboard = () => {
         startDate = new Date(0);
     }
 
-    return transactions.filter(transaction => new Date(transaction.datetime) >= startDate);
+    return transactions.filter(transaction => new Date(transaction.date) >= startDate);
   };
 
   const aggregateTransactionsByMonth = (transactions) => {
-    const monthlyData = {};
-
-    transactions.forEach(({ datetime, amount, type }) => {
-      const date = new Date(datetime);
-      const month = date.toLocaleString('default', { month: 'long' });
-      const year = date.getFullYear();
-      const key = `${month} ${year}`;
-
-      if (!monthlyData[key]) {
-        monthlyData[key] = { month: key, income: 0, expense: 0 };
+    const monthNames = [
+      "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
+      "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"
+    ];
+    const monthlyData = [];
+  
+    transactions.forEach(({ date, amount, type }) => {
+      const dateA = new Date(date);
+      const month = dateA.toLocaleString('default', { month: 'long' });
+      const year = dateA.getFullYear();
+      const key = `${month.charAt(0).toUpperCase() + month.slice(1)} ${year}`;
+  
+      let monthData = monthlyData.find(data => data.month === key);
+      if (!monthData) {
+        monthData = { month: key, income: 0, expense: 0 };
+        monthlyData.push(monthData);
       }
-
+  
       if (type === 'income') {
-        monthlyData[key].income += Number(amount);
+        monthData.income += Number(amount);
       } else if (type === 'expense') {
-        monthlyData[key].expense += Number(amount);
+        monthData.expense += Number(amount);
       }
     });
-
-    return Object.values(monthlyData);
+  
+    monthlyData.sort((a, b) => {
+      const [monthA, yearA] = a.month.split(' ');
+      const [monthB, yearB] = b.month.split(' ');
+      const dateA = new Date(yearA, monthNames.indexOf(monthA));
+      const dateB = new Date(yearB, monthNames.indexOf(monthB));
+      return dateA - dateB;
+    });
+  
+    return monthlyData;
   };
 
   const filteredTransactions = getFilteredTransactions(selectedPeriod);
@@ -91,7 +99,7 @@ const Dashboard = () => {
               <option value="allTime">Всё время</option>
             </select>
           </div>
-          <TransactionsList transactions={filteredTransactions} className={`max-h-full h-72`} />
+          <TransactionsList transactions={filteredTransactions} className={`max-h-full h-72 pr-2`} />
           </div>
           <div className="p-6 bg-white shadow-md rounded-2xl">
             <h2 className="text-2xl font-semibold mb-4">Анализ</h2>
@@ -99,7 +107,7 @@ const Dashboard = () => {
                 <ResponsiveContainer width="100%" height={300}>
                   <BarChart data={analysisData}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" name="Месяц" reversed />
+                    <XAxis dataKey="month" name="Месяц" />
                     <YAxis name="Сумма, ₽" />
                     <Tooltip />
                     <Legend />

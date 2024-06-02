@@ -4,7 +4,6 @@ import { TextField, Button, Container, Select, MenuItem, InputLabel, FormControl
 import { addBudget } from '../store/reducers/budgetSlice';
 import BudgetList from '../components/BudgetList';
 import { addCategory } from '../store/reducers/categoriesSlice';
-import { v4 as uuidv4 } from 'uuid';
 
 const Budget = () => {
   const categories = useSelector((state) => state.categories);
@@ -17,7 +16,7 @@ const Budget = () => {
 
 
   const [budget, setBudget] = useState({
-    category: 'Общее',
+    category_id: categories.length > 0 ? categories[0].id : '',
     period: 'month',
     goal: ''
   });
@@ -30,22 +29,20 @@ const Budget = () => {
     if (newCategory.trim() !== '') {
       dispatch(addCategory(newCategory.trim()));
       setNewCategory('');
-      setBudget({ ...budget, category: newCategory.trim() });
+      setBudget({ ...budget, category_id: newCategory.trim() });
       setAddingCategory(!addingCategory);
     }
   };
-
+  
   const toggleAddCategory = () => {
     setAddingCategory(!addingCategory);
     setNewCategory('');
   };
-
+  
   const handleSubmit = (e) => {
     e.preventDefault();
     if (budget.goal && budget.goal > 0) {
-      const updatedBudget = { ...budget }
-      updatedBudget.id = uuidv4();
-      dispatch(addBudget(budget));
+      dispatch(addBudget({ ...budget, goal: Number(budget.goal)}));
     } else {
       setError('Некорректная сумма!');
     }
@@ -79,13 +76,14 @@ const Budget = () => {
             <Select
               labelId="budget-category-label"
               label="Категория"
-              name="category"
-              value={budget.category}
+              name="category_id"
+              value={budget.category_id}
               onChange={handleChange}
               className='bg-white'
+              required
             >
               {categories.map((category, index) => (
-                <MenuItem key={index} value={category}>{category}</MenuItem>
+                <MenuItem key={index} value={category.id}>{category.title}</MenuItem>
               ))}
               <MenuItem value="" onClick={toggleAddCategory}>
                 + Добавить категорию
@@ -129,6 +127,7 @@ const Budget = () => {
       <BudgetList plans={plans} deletable={true} />
     </Container>
   );
+
 };
 
 export default Budget;

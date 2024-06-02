@@ -2,58 +2,27 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { instance } from '../../api/auth';
 
 export const fetchBudgets = createAsyncThunk('budget/fetchBudgets', async () => {
-  const response = await instance.get('/api/budgets');
+  const response = await instance.get('/api/plans');
   return response.data;
 });
 
 export const addBudget = createAsyncThunk('budget/addBudget', async (budget) => {
-  const response = await instance.post('/api/budgets', budget);
+  const response = await instance.post('/api/plans', budget);
   return response.data;
 });
 
 export const deleteBudget = createAsyncThunk('budget/deleteBudget', async (budgetId) => {
-  await instance.delete(`/api/budgets/${budgetId}`);
+  await instance.delete(`/api/plans/${budgetId}`);
   return budgetId;
 });
 
 export const editBudget = createAsyncThunk('budget/editBudget', async ({ id, updatedBudget }) => {
-  const response = await instance.put(`/api/budgets/${id}`, updatedBudget);
+  const response = await instance.put(`/api/plans/${id}`, updatedBudget);
   return response.data;
 });
 
 const initialState = {
-  plans: [
-    {
-      id: 1,
-      category: 'Общее',
-      goal: 1000,
-      period: 'month'
-    },
-    {
-      id: 2,
-      category: 'Еда',
-      goal: 150000,
-      period: 'year'
-    },
-    {
-      id: 3,
-      category: 'Развлечения',
-      goal: 500,
-      period: 'day'
-    },
-    {
-      id: 4,
-      category: 'Еда',
-      goal: 1000,
-      period: 'day'
-    },
-    {
-      id: 5,
-      category: 'Общее',
-      goal: 500,
-      period: 'day'
-    },
-  ],
+  plans: [],
   loading: false,
   error: null,
 };

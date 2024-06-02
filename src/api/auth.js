@@ -20,3 +20,28 @@ instance.interceptors.request.use(
     return Promise.reject(error);
   }
 );
+
+instance.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+
+    if (error.response.status === 401 && error.response.data.message === "Access token expired" && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      try {
+        const refreshTokenResponse = await axios.post('/auth/refresh');
+        const newAccessToken = refreshTokenResponse.data.access_token;
+
+        localStorage.setItem('access_token', newAccessToken);
+        originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+
+        return instance(originalRequest);
+      } catch (refreshTokenError) {
+          console.error('Ошибка обновления токена:', refreshTokenError);
+          return Promise.reject(refreshTokenError);
+      }
+    }
+    return Promise.reject(error);
+  }
+);

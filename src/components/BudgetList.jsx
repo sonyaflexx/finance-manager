@@ -6,12 +6,13 @@ import { deleteBudget } from "../store/reducers/budgetSlice";
 
 export default function BudgetList({ plans, deletable }) {
   const dispatch = useDispatch();
+  const categories = useSelector((state) => state.categories)
   const transactions = useSelector((state) => state.transactions.transactions);
   const [filterPeriod, setFilterPeriod] = useState("month");
 
   const categoryTotals = transactions.reduce((acc, transaction) => {
-    const amount = transaction.type === 'expense' ? transaction.amount : 0;
-    const transactionDate = new Date(transaction.datetime);
+    const amount = transaction.type === 'expense' ? Number(transaction.amount) : 0;
+    const transactionDate = new Date(transaction.date);
     const budgetStartDate = new Date();
     const budgetEndDate = new Date();
 
@@ -31,7 +32,7 @@ export default function BudgetList({ plans, deletable }) {
     }
 
     if (transactionDate >= budgetStartDate && transactionDate <= budgetEndDate) {
-      acc[transaction.category] = (acc[transaction.category] || 0) + amount;
+      acc[transaction.category_id] = (acc[transaction.category_id] || 0) + amount;
     }
 
     return acc;
@@ -42,6 +43,12 @@ export default function BudgetList({ plans, deletable }) {
   const handleDelete = (id) => {
     dispatch(deleteBudget(id));
   };
+
+  const getCategoryTitle = (categoryId) => {
+    const category = categories.find((cat) => cat.id === categoryId);
+    return category ? category.title : '';
+  };
+
 
   return (
     <div className="p-6 bg-white shadow-md rounded-xl mt-6">
@@ -57,12 +64,12 @@ export default function BudgetList({ plans, deletable }) {
       <ul className="h-56 overflow-y-auto flex flex-col gap-1">
         {filteredPlans && filteredPlans.length > 0 ? (
           filteredPlans.map(plan => {
-            const totalAmount = categoryTotals[plan.category] || 0;
+            const totalAmount = categoryTotals[plan.category_id] || 0;
             const exceedsGoal = totalAmount > plan.goal;
 
             return (
               <li key={plan.id} className="w-full flex justify-between px-4 py-2 border rounded-xl items-center">
-                <div className='font-medium'>{plan.category}</div>
+                <div className='font-medium'>{getCategoryTitle(plan.category_id)}</div>
                 <div className={`font-medium ${exceedsGoal ? 'text-red-600' : 'text-green-600'} flex items-center gap-4`}>
                   {totalAmount}₽ / {plan.goal}₽
                   {deletable && (

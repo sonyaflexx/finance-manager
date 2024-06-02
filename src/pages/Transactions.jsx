@@ -1,16 +1,10 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import TransactionsForm from '../components/TransactionsForm';
 import TransactionsList from '../components/TransactionsList';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchTransactions } from '../store/reducers/transactionsSlice';
+import { useSelector } from 'react-redux';
 
 function Transactions() {
-  const dispatch = useDispatch();
   const transactions = useSelector((state) => state.transactions.transactions);
-
-  useEffect(() => {
-    dispatch(fetchTransactions());
-  }, [dispatch]);
 
   return (
     <div className='flex flex-col items-center py-16 gap-10'>

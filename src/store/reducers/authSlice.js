@@ -11,13 +11,24 @@ export const register = createAsyncThunk('auth/register', async ({ email, passwo
   return response.data;
 });
 
+export const fetchCurrentToken = createAsyncThunk('auth/fetchCurrentToken', async () => {
+  const response = await instance.get('/api/auth/current', {
+    headers: {
+      'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+    }
+  });
+  return response.data;
+});
+
 const initialState = {
-  isAuthenticated: true,
-  user: null,
+  isAuthenticated: false,
+  token: null,
   loginLoading: false,
   loginError: null,
   registerLoading: false,
   registerError: null,
+  loadingCurrentToken: false,
+  currentTokenError: null,
 };
 
 const authSlice = createSlice({
@@ -26,7 +37,7 @@ const authSlice = createSlice({
   reducers: {
     logout(state) {
       state.isAuthenticated = false;
-      state.user = null;
+      state.token = null;
       localStorage.removeItem('access_token');
     },
   },
@@ -39,7 +50,7 @@ const authSlice = createSlice({
       .addCase(login.fulfilled, (state, action) => {
         state.loginLoading = false;
         state.isAuthenticated = true;
-        state.user = action.payload.user;
+        state.token = action.payload.access_token;
         localStorage.setItem('access_token', action.payload.access_token);
       })
       .addCase(login.rejected, (state, action) => {
@@ -53,12 +64,25 @@ const authSlice = createSlice({
       .addCase(register.fulfilled, (state, action) => {
         state.registerLoading = false;
         state.isAuthenticated = true;
-        state.user = action.payload.user;
+        state.token = action.payload.access_token;
         localStorage.setItem('access_token', action.payload.access_token);
       })
       .addCase(register.rejected, (state, action) => {
         state.registerLoading = false;
         state.registerError = action.error.message;
+      })
+      .addCase(fetchCurrentToken.pending, (state) => {
+        state.loadingCurrentToken = true;
+        state.currentTokenError = null;
+      })
+      .addCase(fetchCurrentToken.fulfilled, (state, action) => {
+        state.loadingCurrentToken = false;
+        state.isAuthenticated = true;
+        state.token = action.payload.access_token;
+      })
+      .addCase(fetchCurrentToken.rejected, (state, action) => {
+        state.loadingCurrentToken = false;
+        state.currentTokenError = action.error.message;
       });
   },
 });
