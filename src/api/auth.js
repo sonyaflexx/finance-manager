@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export const instance = axios.create({
-  baseURL: process.env.API_URL || 'finance-app-backend-psi.vercel.app' || 'http://localhost:8000',
+  baseURL: process.env.API_URL || 'https://finance-app-backend-psi.vercel.app' || 'http://localhost:8000',
   headers: {
     'Content-Type': 'application/json',
   },
